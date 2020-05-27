@@ -71,6 +71,7 @@ static enum lru_list jw_get_lru_idx(struct page *page, enum lru_list lru)
 // 1&2 together --> kernel panic
 //  if(lru == 2 || lru == 3)
 //  if(lru == 0 || lru == 1)
+//  if(lru == 3)
     return lru + NR_LRU_LISTS*(page->idx);
 //  else
 //    return lru;

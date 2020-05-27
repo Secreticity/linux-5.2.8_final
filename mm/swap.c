@@ -48,6 +48,8 @@
 #include <linux/kernel.h>
 
 int a=0, b=0, c=0, d=0, e=0, f=0;
+int jwjw = 0;
+
 
 int enabled = 0;
 unsigned long long a_t[NUMCORE], a_c[NUMCORE];
@@ -122,9 +124,7 @@ static void __page_cache_release(struct page *page)
     //prev_lru = jw_page_off_lru(page) + NR_LRU_LISTS*(page->idx);
     prev_lru = jw_get_lru_idx(page, jw_page_off_lru(page));
     spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags);
-//if(a%10000 == 0)
-//  printk("jw: __page_cache_release [%ld]\n", (int)(current->pid));
-//a++;
+//    lruvec->jw_count[prev_lru]++;
 		//del_page_from_lru_list(page, lruvec, page_off_lru(page) + NR_LRU_LISTS*(page->idx));
  		del_page_from_lru_list(page, lruvec, jw_get_lru_idx(page, page_off_lru(page)));
      
@@ -365,6 +365,7 @@ static void add_pagevec_lru_move_fn(struct pagevec *pvec,
       //prev_lru = lru + NR_LRU_LISTS*(page->idx);
       prev_lru = jw_get_lru_idx(page, lru);
       spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags);
+//      lruvec->jw_count[prev_lru]++;
     }
 //if(b%10000 == 0)
 //  printk("jw: add_pagevec_lru_move_fn [%ld]\n", (int)(current->pid));
@@ -388,6 +389,15 @@ static void add_pagevec_lru_move_fn(struct pagevec *pvec,
 
 //getrawmonotonic(&m_local[1]);
 //calclock(m_local, &m_t[smp_processor_id()], &m_c[smp_processor_id()]);
+
+/*
+if(jwjw%10000 == 0) {
+  enum lru_list jw_lru;
+  jw_for_each_lru(jw_lru)
+    printk(KERN_CONT "[%d] %d ", (int)jw_lru, lruvec->jw_count[(int)jw_lru]);
+}
+jwjw++;
+*/
 }
 
 static void tail_pagevec_lru_move_fn(struct pagevec *pvec,
@@ -433,6 +443,7 @@ static void tail_pagevec_lru_move_fn(struct pagevec *pvec,
         prev_lru = jw_get_lru_idx(page, page_lru(page));
         //prev_lru = page_lru(page) + NR_LRU_LISTS*(page->idx);
         spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags);
+//        lruvec->jw_count[prev_lru]++;
       }
 //if(c%10000 == 0)
 //  printk("jw: tail_pagevec_lru_move_fn [%ld]\n", (int)(current->pid));
@@ -504,6 +515,8 @@ static void activate_pagevec_lru_move_fn(struct pagevec *pvec,
         //prev_lru = pprev_lru + LRU_ACTIVE;
         spin_lock_irqsave(&lruvec->jw_lruvec_lock[pprev_lru], jwflags);
         spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags_);
+//        lruvec->jw_count[pprev_lru]++;
+//        lruvec->jw_count[prev_lru]++;
       }
 //if(d%10000 == 0)
 //  printk("jw: activate_pagevec_lru_move_fn [%ld]\n", (int)(current->pid));
@@ -591,8 +604,11 @@ static void deactivate_file_pagevec_lru_move_fn(struct pagevec *pvec,
       //pprev_lru = lru + active + NR_LRU_LISTS*(page->idx);
       //prev_lru = lru + NR_LRU_LISTS*(page->idx);
       spin_lock_irqsave(&lruvec->jw_lruvec_lock[pprev_lru], jwflags);
-      if(prev_lru != pprev_lru)
+//      lruvec->jw_count[pprev_lru]++;
+      if(prev_lru != pprev_lru){
         spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags_);
+//        lruvec->jw_count[prev_lru]++;
+      }
     }
 //if(e%10000 == 0)
 //  printk("jw: deactivate_file_pagevec_lru_move_fn [%ld]\n", (int)(current->pid));
@@ -609,8 +625,10 @@ static void deactivate_file_pagevec_lru_move_fn(struct pagevec *pvec,
         spin_unlock_irqrestore(&lruvec->jw_lruvec_lock[prev_lru], jwflags_);
       prev_lru = jw_get_lru_idx(page, lru);
       //prev_lru = lru + NR_LRU_LISTS*(page->idx);
-      if(prev_lru != pprev_lru)
+      if(prev_lru != pprev_lru){
         spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags_);
+//        lruvec->jw_count[prev_lru]++;
+      }
     }
 
     add_page_to_lru_list(page, lruvec, jw_get_lru_idx(page, lru));
@@ -1180,6 +1198,7 @@ void release_pages(struct page **pages, int nr)
         prev_lru = jw_get_lru_idx(page, jw_page_off_lru(page));
         //prev_lru = jw_page_off_lru(page) + NR_LRU_LISTS*(page->idx);
         spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags);
+//        lruvec->jw_count[prev_lru]++;
       }
 			//del_page_from_lru_list(page, lruvec, page_off_lru(page)+NR_LRU_LISTS*(page->idx));
 			del_page_from_lru_list(page, lruvec, jw_get_lru_idx(page, page_off_lru(page)));

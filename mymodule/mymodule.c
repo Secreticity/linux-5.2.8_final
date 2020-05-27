@@ -4,7 +4,7 @@
 #include <linux/calclock.h>
 
 extern int enabled;
-extern unsigned long long a_t[NUMCORE], a_c[NUMCORE];
+/*extern unsigned long long a_t[NUMCORE], a_c[NUMCORE];
 extern unsigned long long b_t[NUMCORE], b_c[NUMCORE];
 extern unsigned long long c_t[NUMCORE], c_c[NUMCORE];
 extern unsigned long long d_t[NUMCORE], d_c[NUMCORE];
@@ -15,7 +15,7 @@ extern unsigned long long h_t[NUMCORE], h_c[NUMCORE];
 extern unsigned long long i_t[NUMCORE], i_c[NUMCORE];
 extern unsigned long long j_t[NUMCORE], j_c[NUMCORE];
 extern unsigned long long k_t[NUMCORE], k_c[NUMCORE];
-extern unsigned long long l_t[NUMCORE], l_c[NUMCORE];
+extern unsigned long long l_t[NUMCORE], l_c[NUMCORE]; */
 extern unsigned long long m_t[NUMCORE], m_c[NUMCORE];
 
 static int __init init_mymodule(void)
@@ -23,7 +23,7 @@ static int __init init_mymodule(void)
 	enabled = 1;
 	int i;
 	for (i=0; i<NUMCORE; i++){
-		a_t[i] = 0, a_c[i] = 0;
+/*		a_t[i] = 0, a_c[i] = 0;
 		b_t[i] = 0, b_c[i] = 0;
 	  c_t[i] = 0, c_c[i] = 0;
 		d_t[i] = 0, d_c[i] = 0;
@@ -34,7 +34,7 @@ static int __init init_mymodule(void)
 		i_t[i] = 0, i_c[i] = 0;
 		j_t[i] = 0, j_c[i] = 0;
 		k_t[i] = 0, k_c[i] = 0;
-		l_t[i] = 0, l_c[i] = 0;
+		l_t[i] = 0, l_c[i] = 0; */
 		m_t[i] = 0, m_c[i] = 0;
 	}
 	printk("=====IO profiling=====\n");
@@ -43,7 +43,7 @@ static int __init init_mymodule(void)
 static int __exit exit_mymodule(void)
 {
 	enabled = 0;
-	unsigned long long a_time = 0, a_count = 0;
+/*	unsigned long long a_time = 0, a_count = 0;
 	unsigned long long b_time = 0, b_count = 0;
 	unsigned long long c_time = 0, c_count = 0;
 	unsigned long long d_time = 0, d_count = 0;
@@ -54,12 +54,12 @@ static int __exit exit_mymodule(void)
 	unsigned long long i_time = 0, i_count = 0;
 	unsigned long long j_time = 0, j_count = 0;
 	unsigned long long k_time = 0, k_count = 0;
-	unsigned long long l_time = 0, l_count = 0;
+	unsigned long long l_time = 0, l_count = 0; */
 	unsigned long long m_time = 0, m_count = 0;
 
 	int i;
 	for (i=0; i<NUMCORE; i++){
-		a_time += a_t[i];
+/*		a_time += a_t[i];
 		a_count += a_c[i];
 		b_time += b_t[i];
 		b_count += b_c[i];
@@ -82,7 +82,7 @@ static int __exit exit_mymodule(void)
 		k_time += k_t[i];
 		k_count += k_c[i];
 		l_time += l_t[i];
-		l_count += l_c[i];
+		l_count += l_c[i]; */
 		m_time += m_t[i];
 		m_count += m_c[i];
 	}
@@ -98,7 +98,7 @@ static int __exit exit_mymodule(void)
 //	printk("j_time : %llu, j_count : %llu\n", j_time, j_count);
 //	printk("k_time : %llu, k_count : %llu\n", k_time, k_count);
 //	printk("l_time : %llu, l_count : %llu\n", l_time, l_count);
-	printk("add_pagevec:%llu", m_time); //, m_count : %llu\n", m_time, m_count);
+	printk("add_pagevec:%llu %llu", m_time, m_count); //, m_count : %llu\n", m_time, m_count);
 	
 	return 0;
 }

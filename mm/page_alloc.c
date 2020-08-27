@@ -77,6 +77,7 @@
 #include "shuffle.h"
 
 int idx = 0;
+int pg = 0;
 
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
 static DEFINE_MUTEX(pcp_batch_high_lock);
@@ -1285,6 +1286,10 @@ static void free_one_page(struct zone *zone,
 	spin_unlock(&zone->lock);
 }
 
+
+//jiwoo
+int status_int[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+int wrong_int = 0;
 static void __meminit __init_single_page(struct page *page, unsigned long pfn,
 				unsigned long zone, int nid)
 {
@@ -1299,12 +1304,31 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
 	
 //	page->idx = (int)(idx%JW_FACTOR);
 //	idx++;
- 	page->idx = (int)(abs((int)(((long)page%100000000)%11)%JW_FACTOR));
+//jiwoo
+  unsigned int rand_int = get_random_int();
+  int idx_int = rand_int%JW_FACTOR;
+  page->idx = idx_int;
+//  page->idx = (int)(abs((int)(((long)page%100000000)%11)%JW_FACTOR));
 #ifdef WANT_PAGE_VIRTUAL
 	/* The shift won't overflow because ZONE_NORMAL is below 4G. */
 	if (!is_highmem_idx(zone))
 		set_page_address(page, __va(pfn << PAGE_SHIFT));
 #endif
+
+  if(idx_int>=0 && idx_int<JW_FACTOR)
+    status_int[idx_int]++;
+  else
+    wrong_int++;
+  int i=0;
+
+  if(pg%10000 == 0){
+    printk("jw: ");
+    for(i=0; i<JW_FACTOR; i++)
+      printk("[%d]", status_int[i]);
+    printk("\n");
+    printk("jw: wrong[%d]", wrong_int);
+  }
+  pg++;
 }
 
 #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT

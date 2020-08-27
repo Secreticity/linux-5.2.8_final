@@ -126,7 +126,7 @@ static void __page_cache_release(struct page *page)
     spin_lock_irqsave(&lruvec->jw_lruvec_lock[prev_lru], jwflags);
 //    lruvec->jw_count[prev_lru]++;
 		//del_page_from_lru_list(page, lruvec, page_off_lru(page) + NR_LRU_LISTS*(page->idx));
- 		del_page_from_lru_list(page, lruvec, jw_get_lru_idx(page, page_off_lru(page)));
+    del_page_from_lru_list(page, lruvec, jw_get_lru_idx(page, page_off_lru(page)));
      
     spin_unlock_irqrestore(&lruvec->jw_lruvec_lock[prev_lru], jwflags);
 //		spin_unlock_irqrestore(&pgdat->lru_lock, flags);
@@ -308,8 +308,8 @@ static void add_pagevec_lru_move_fn(struct pagevec *pvec,
 
 //struct timespec g_local[2];
 
-//struct timespec m_local[2];
-//getrawmonotonic(&m_local[0]);
+struct timespec m_local[2];
+getrawmonotonic(&m_local[0]);
 	
   for (i = 0; i < pagevec_count(pvec); i++) {
 		page = pvec->pages[i];
@@ -387,12 +387,13 @@ static void add_pagevec_lru_move_fn(struct pagevec *pvec,
 //getrawmonotonic(&g_local[1]);
 //calclock(g_local, &g_t[smp_processor_id()], &g_c[smp_processor_id()]);
 
-//getrawmonotonic(&m_local[1]);
-//calclock(m_local, &m_t[smp_processor_id()], &m_c[smp_processor_id()]);
+getrawmonotonic(&m_local[1]);
+calclock(m_local, &m_t[smp_processor_id()], &m_c[smp_processor_id()]);
 
 /*
 if(jwjw%10000 == 0) {
   enum lru_list jw_lru;
+  printk("jiwoo");
   jw_for_each_lru(jw_lru)
     printk(KERN_CONT "[%d] %d ", (int)jw_lru, lruvec->jw_count[(int)jw_lru]);
 }

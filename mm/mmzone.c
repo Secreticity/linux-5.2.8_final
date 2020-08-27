@@ -96,7 +96,7 @@ void lruvec_init(struct lruvec *lruvec)
 		INIT_LIST_HEAD(&lruvec->lists[lru]);
   //jw_for_each_lru(lru)
     spin_lock_init(&lruvec->jw_lruvec_lock[lru]);
-//    lruvec->jw_count[lru] = 0;
+    //lruvec->jw_count[lru] = 0;
   }
 }
 

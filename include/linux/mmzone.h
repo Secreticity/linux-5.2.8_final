@@ -300,7 +300,7 @@ struct zone_reclaim_stat {
 struct lruvec {
 	struct list_head		lists[NR_LRU_LISTS*JW_FACTOR];
   spinlock_t          jw_lruvec_lock[NR_LRU_LISTS*JW_FACTOR];
-//  int                 jw_count[NR_LRU_LISTS*JW_FACTOR];
+  //int                 jw_count[NR_LRU_LISTS*JW_FACTOR];
 	struct zone_reclaim_stat	reclaim_stat;
 	/* Evictions & activations on the inactive file list */
 	atomic_long_t			inactive_age;

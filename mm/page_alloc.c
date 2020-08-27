@@ -1314,21 +1314,6 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
 	if (!is_highmem_idx(zone))
 		set_page_address(page, __va(pfn << PAGE_SHIFT));
 #endif
-
-  if(idx_int>=0 && idx_int<JW_FACTOR)
-    status_int[idx_int]++;
-  else
-    wrong_int++;
-  int i=0;
-
-  if(pg%10000 == 0){
-    printk("jw: ");
-    for(i=0; i<JW_FACTOR; i++)
-      printk("[%d]", status_int[i]);
-    printk("\n");
-    printk("jw: wrong[%d]", wrong_int);
-  }
-  pg++;
 }
 
 #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
